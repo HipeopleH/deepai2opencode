@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DeepAI Bridge</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div class="glow"></div>
+
+    <header class="topbar">
+      <div class="brand">
+        <span class="mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M4 15.5 9 6l4 7 2-3.5L20 18" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+        <div>
+          <h1>DeepAI Bridge</h1>
+          <p id="subtitle">connecting…</p>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <div class="pill" id="status-pill"><span class="dot"></span><span id="status-text">Starting</span></div>
+        <button class="ghost" id="refresh">Refresh</button>
+        <button class="ghost danger" id="shutdown">Stop</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="grid three">
+        <article class="card">
+          <h2>Bridge</h2>
+          <div class="kv">
+            <span>Endpoint</span><a id="bridge-url" class="mono" href="#" target="_blank" rel="noreferrer">—</a>
+            <span>API base</span><span class="mono" id="api-base">—</span>
+            <span>Uptime</span><span class="mono" id="uptime">—</span>
+            <span>Build</span><span class="mono" id="version">—</span>
+            <span>Account</span><span class="mono" id="account">—</span>
+            <span>Default</span><span class="mono" id="default-model">—</span>
+          </div>
+          <p class="hint" id="key-hint"></p>
+        </article>
+
+        <article class="card theos">
+          <div class="card-head">
+            <h2>Theos</h2>
+            <span class="tag" id="theos-tag">—</span>
+          </div>
+          <div class="big" id="theos-balance">—</div>
+          <div class="sub" id="theos-granted">—</div>
+          <div class="meter"><span id="theos-bar"></span></div>
+          <div class="kv tight">
+            <span>Used since grant</span><span class="mono" id="theos-used">—</span>
+            <span>Grant resets</span><span class="mono" id="theos-reset">—</span>
+            <span>Read</span><span class="mono" id="theos-age">—</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2>Activity</h2>
+          <div class="stats">
+            <div><b id="stat-turns">0</b><span>turns</span></div>
+            <div><b id="stat-failures">0</b><span>failed</span></div>
+            <div><b id="stat-running">0</b><span>running</span></div>
+          </div>
+          <div class="running" id="running-list"></div>
+          <div class="kv tight">
+            <span>Models</span><span class="mono" id="counts">—</span>
+            <span>Autostart</span><span class="mono" id="autostart-state">—</span>
+          </div>
+        </article>
+      </section>
+
+      <section class="card models">
+        <div class="card-head">
+          <h2>Models <span class="count" id="model-count"></span></h2>
+          <div class="tools">
+            <input id="search" type="search" placeholder="Filter models…" autocomplete="off" spellcheck="false" />
+            <div class="segmented" id="filter">
+              <button data-filter="all" class="active">All</button>
+              <button data-filter="free">Free</button>
+              <button data-filter="paid">Paid</button>
+            </div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Model ID</th>
+                <th>DeepAI model</th>
+                <th>Cost</th>
+                <th>Context</th>
+                <th>Type</th>
+              </tr>
+            </thead>
+            <tbody id="models"></tbody>
+          </table>
+        </div>
+        <p class="hint">
+          The ID column is what you pass to OpenCode. Copy it straight into <code>--model</code>.
+        </p>
+      </section>
+
+      <section class="grid two">
+        <article class="card log">
+          <div class="card-head">
+            <h2>Recent turns</h2>
+            <span class="tag" id="log-count">0</span>
+          </div>
+          <div class="table-wrap short">
+            <table>
+              <thead>
+                <tr><th>Time</th><th>Model</th><th>Status</th><th>Price</th><th>Latency</th></tr>
+              </thead>
+              <tbody id="events"></tbody>
+            </table>
+            <p class="empty" id="events-empty">No turns yet. Send one from OpenCode and it shows up here.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2>Startup</h2>
+          <p class="hint">Run the bridge automatically when you sign in to Windows.</p>
+          <label class="toggle">
+            <input type="checkbox" id="autostart" />
+            <span class="track"><span class="knob"></span></span>
+            <span class="toggle-label">Start with Windows</span>
+          </label>
+          <p class="hint mono small" id="autostart-path"></p>
+
+          <hr />
+
+          <h3>Launcher</h3>
+          <p class="hint">
+            Double-click <span class="mono" id="launcher-name">DeepAI Bridge.vbs</span> to start the bridge
+            and open this window. No console, no browser chrome.
+          </p>
+          <div class="actions">
+            <button class="ghost" id="copy-base">Copy API base</button>
+            <button class="ghost" id="copy-model">Copy default model</button>
+          </div>
+          <p class="hint mono small" id="log-path"></p>
+        </article>
+      </section>
+    </main>
+
+    <div class="offline" id="offline" hidden>
+      <div>
+        <h2>Bridge is offline</h2>
+        <p>Start it with the <b>DeepAI Bridge</b> shortcut, or run <code>node src\index.mjs</code>.</p>
+        <button class="ghost" id="retry">Try again</button>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" hidden></div>
+    <script src="/app.js"></script>
+  </body>
+</html>
